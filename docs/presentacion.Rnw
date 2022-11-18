@@ -199,7 +199,7 @@ Si el indice LDA tiene valores altos hay una grand diferencia entre clases y no 
 \item Las particiones en  **PPtree** se basan en combinaciones lineales de variables por lo que toma en cuenta la correlación entre las variables para separar las clases.
 \end{itemize}
 \end{frame}
-
+          
 
 \begin{frame}
 \frametitle{PPtree}
