@@ -140,14 +140,16 @@ Algunos aspectos no deseables del clasificador individual que se pueden mejorar.
 
 
 \begin{frame}
+\frametitle{Inidces PP para clasificaci\'on}
 \begin{itemize}
 \item  \cite{lee2005projection} proponen un índice derivado del análisis disciminante lineal útil para exploración en clasificación supervisada.
-\item \cite{lee2010projection} proponen un \'indice que funciona bien en el contexto de $n<<p$ 
+
+\item \cite{lee2010projection} proponen un \'indice que funciona bien en el contexto de $n<<p$
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{ PP\_LDA }
+\frametitle{ Indice PP,  $\mathbb{I}_{LDA}$ }
 
 % \includegraphics[scale=0.5]{LDA.png}
 
@@ -165,7 +167,7 @@ $\blW=\sum_{g=1}^{G}\sum_{i\in H_g}(\mathbf{x}_{i}-\bar{\mathbf{x}}_{g})(\mathbf
 Si el indice LDA tiene valores altos hay una grand diferencia entre clases y no de lo contrario.
 
 \end{frame}
-\frametitle{ PP\_PDA }
+\frametitle{Indice PP, $\mathbb{I}_{PDA}$ }
 \begin{frame}
 % \includegraphics[scale=0.5]{PDA.png}
 
@@ -188,15 +190,20 @@ Si el indice LDA tiene valores altos hay una grand diferencia entre clases y no 
 % \item No solamente un óptimo global ya que los optimos locales pueden revelear estucturas interesantes.
 % \end{itemize}
 % \end{frame}
-
+\section{PPtree}
 \begin{frame}
 \frametitle{PPtree: Projection pursuit classification tree}
+M\'etodo supervisado de clasificaci\'on
+
+\vspace{0.3cm}
+
 \begin{itemize}
-\item \textbf{PPtree},árboles de clasificación basados en proyecciones \cite{lee2005projection} .
 
-\item Combina métodos de árboles con reducción de dimensionalidad basada en proyecciones.
+\item \textbf{PPtree}: \'Arbol de clasificación basados en proyecciones \cite{lee2005projection} .
 
-\item Las particiones en  **PPtree** se basan en combinaciones lineales de variables por lo que toma en cuenta la correlación entre las variables para separar las clases.
+\item Combina métodos de árboles con reducción de dimensionalidad basada en proyecciones, optimizando un \'indice de PP.
+
+\item Las particiones en  \textbf{PPtree} se basan en combinaciones lineales de variables por lo que toma en cuenta la correlación entre las variables para separar las clases.
 \end{itemize}
 \end{frame}
 
