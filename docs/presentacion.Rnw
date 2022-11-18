@@ -1,0 +1,571 @@
+\documentclass[9pt]{beamer}
+\usepackage[spanish]{babel}
+\selectlanguage{spanish}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{fancyvrb}
+\usepackage{lipsum}
+\usepackage{verbatimbox}
+\usepackage{bibentry}
+\usepackage{amssymb}
+
+
+
+\newcommand{\blA}{\mbox{\boldmath {\bf A}}}
+\newcommand{\blB}{\mbox{\boldmath {\bf B}}}
+\newcommand{\blW}{\mbox{\boldmath {\bf W}}}
+\newcommand{\blX}{\mbox{\boldmath {\bf X}}}
+\newcommand{\blM}{\mbox{\boldmath {\bf M}}}
+\newcommand{\blx}{\mbox{\boldmath {\bf x}}}
+\newcommand{\bla}{\mbox{\boldmath {\bf a}}}
+\newcommand{\blalpha}{\mbox{\boldmath {\alpha}}}
+
+\usepackage{beamerthemesplit}
+\useinnertheme{circles,rounded}
+\usepackage{bibentry}
+\definecolor{uofsgreen}{RGB}{115, 38, 115}
+\usecolortheme[named=uofsgreen]{structure}
+
+\author{Natalia da Silva\\
+\vspace{0.2cm}
+Instituto de Estad\'istica-FCEA-UDELAR\\
+\vspace{0.2cm}
+natalia.dasilva@fcea.edu.uy  -  natydasilva.com  - @pacocuak
+}
+\title{Árboles de clasificación basados en proyecciones y posibles extensiones
+}
+
+\date{Noviembre-2022\\
+}
+
+
+
+\begin{document}
+\frame{\titlepage}
+
+
+
+\section{Introducción}
+
+
+
+\begin{frame}
+\frametitle{Estructura de la charla}
+
+\begin{itemize}
+\item Motivación
+
+\item Projection Pursuit
+
+\item Descripción de PPtree
+
+\item Aspectos menos deseables de PPtree
+
+\item Extensiones de PPtree
+
+\item Comentarios Finales
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{ Motivación}
+
+\begin{itemize}
+\item Trabajo previo, PPforest, bosques aleatorios basados en proyecciones.\\
+\cite{da2021projection}, \cite{dainteractive}\\
+
+\item Clasificador individual de PPforest es PPtree.
+
+\item Algunas debilidades de PPtree que se pueden mejorar.
+
+\item Mejorar la performance del bosques mejorando los árboles individuales.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivaci\'on, Bosques aleatorios}
+Bosques aleatoreos \cite{breiman2001random} es un métodos de supervisado de agregación ampliamente utilizado y competitivo respecto a otros. Consiste en combinar \'arboles individuales incorporando dos conceptos claves:
+
+\begin{itemize}
+\item Agregación Bootstrap \cite{breiman1996bagging}
+
+\item Selección aleatoria de variables \cite{amit1997shape}, \cite{ho1998random} en los árboles individuales.
+
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Motivaci\'on, Bosques aleatorios}
+Dos propuestas de agrupación basadas en árboles:
+
+\begin{itemize}
+\item Basada en árboles ortogonales
+\item Basada en árboles oblicuos
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Motivaci\'on, PPforest}
+PPforest bosque aleatorio basado en proyecciones para clasificación.
+
+
+Clasificador individual PPtree\cite{lee2013pptree}, usa combinaciones lineales de variables en la partición del nodo, separa las clases teniendo en cuenta la correlación entre las variables.
+
+\vspace{0.3cm}
+Algunos aspectos no deseables del clasificador individual que se pueden mejorar.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Projection Pursuit}
+\begin{itemize}
+\item PP es una técnica estadística para exploración para encontrar proyecciones de datos que revelen estructuras interesantes \cite{friedman1974projection}, \cite{friedman1981projection}.
+
+\item Los algoritmos de PP buscan proyecciones de bajas dimensiones optimizando un índice de proyección que mide si la  proyección es útil en algún sentido. 
+
+\item Algunos índices de PP incorporan información de las clases para el cálculo.
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\begin{itemize}
+\item  \cite{lee2005projection} proponen un índice derivado del análisis disciminante lineal útil para exploración en clasificación supervisada.
+\item \cite{lee2010projection} proponen un \'indice que funciona bien en el contexto de $n<<p$ 
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{ PP\_LDA }
+
+% \includegraphics[scale=0.5]{LDA.png}
+
+\begin{equation}
+ \mathbb{I}_{LDA}(\blA) =
+ \left\{
+  \begin{array}{l l}
+    1-\frac{|\blA^T \blW\blA|}{|\blA^T(\blW+\blB)\blA|} &  \text{for}~|\blA^T(\blW+\blB)\blA|\neq 0\\
+    0 &  \text{for}~|\blA^T(\blW+\blB)\blA|= 0
+  \end{array} \right.
+\end{equation}
+
+\noindent donde$\blA = [\bla_1, \bla_2 , . . . , \bla_q ]$ es una matriz  $p\times q$ y define una proyecci\'on ortonormal  de $p$-dimensiones a un subespacio $q$-dimensional, $\blB=\sum_{g=1}^G n_g(\bar{\mathbf{x}}_{g}-\bar{\mathbf{x}})(\bar{\mathbf{x}}_{g}-\bar{\mathbf{x}})^{T}$ es  La suma de cuadrados entre grupos $p\times p$.
+$\blW=\sum_{g=1}^{G}\sum_{i\in H_g}(\mathbf{x}_{i}-\bar{\mathbf{x}}_{g})(\mathbf{x}_{i}-\bar{\mathbf{x}}_{g})^T$ es la suma de cuadrados al interor de los grupos $p\times p$  donde $H_g=\{i| y_i = g, i = 1, ..., n\}$, $\bar{\mathbf{x}}_{g}$ es el vector de medias de los grupos y $\bar{\mathbf{x}}$ vector de medias global. 
+Si el indice LDA tiene valores altos hay una grand diferencia entre clases y no de lo contrario.
+
+\end{frame}
+\frametitle{ PP\_PDA }
+\begin{frame}
+% \includegraphics[scale=0.5]{PDA.png}
+
+\begin{equation}
+\mathbb{I}_{PDA}(\blA,\lambda)=1-\frac{|\blA^T \blW_{PDA}(\lambda)\blA|}{|\blA^T (\blW_{PDA}(\lambda)+\blB) \blA|}
+\end{equation}
+
+\noindent misma notaci\'on que en  $\mathbb{I}_{LDA}$, agregando que $\lambda \in [0,1)$ es un par\'ametro de contracci\'on y usamos una suma de cuadrados al interior de grupos diferente, $\blW_{PDA}(\lambda)=\mbox{diag}(\blW)+(1-\lambda)\mbox{offdiag}(\blW)$.
+
+
+\end{frame}
+
+
+% 
+% \begin{frame}
+% \frametitle{Projection pursuit} 
+% \begin{itemize}
+% \item PP quiere encontrar todas las proyecciones interesantes.
+% 
+% \item No solamente un óptimo global ya que los optimos locales pueden revelear estucturas interesantes.
+% \end{itemize}
+% \end{frame}
+
+\begin{frame}
+\frametitle{PPtree: Projection pursuit classification tree}
+\begin{itemize}
+\item \textbf{PPtree},árboles de clasificación basados en proyecciones \cite{lee2005projection} .
+
+\item Combina métodos de árboles con reducción de dimensionalidad basada en proyecciones.
+
+\item Las particiones en  **PPtree** se basan en combinaciones lineales de variables por lo que toma en cuenta la correlación entre las variables para separar las clases.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{PPtree}
+\begin{itemize}
+
+\item Trata los datos siempre como un problema de dos clases.
+
+\item  Cuando las clases son más de dos el algoritmo usas dos pasos de proyección optimizando un índice de proyección en cada partición del nodo.
+
+\item Los coeficientes de proyección en cada nodo representan la importancia de la variables, útiles para explorar como las clases son separadas en cada árbol.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{ Algoritmo de PPtree}
+\begin{enumerate}
+\item Optimiza un indice de proyección para encontrar una proyección $1-D$ óptima, $\alpha^*$, para separarar todas las classes obteniendo los datos proyectados $z = \alpha^*x$
+
+\item En $z$, dedefine el problema en uno de dos clases comparando medias y asigna una nueva etiqueta,  $g_1^*$ o $g_2^*$ para cada observación, generando una nueva variable $y_i^*$ para la clase.  
+\item Encuentra una proyección $1-D$ óptima $\alpha^{**}$, usando $\{(\mathbf{x_i},y_i^*)\}_{i=1}^n$ para separar $g_1^*$ y $g_2^*$. La mejor separación y la regla de decisión para el nodo, si $\alpha^{**T}M_1< c$ entonces asigna $g_1^*$ al nodo izquierdo y en otro caso $g_2^*$ al derecho, donde $M_1$ es la media de $g_1^*$.
+
+\item Para cada grupo, todos los pasos previos son repetidos hasta que  $g_1^*$ y $g_2^*$ tienen una sola clase de la clase original. 
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ilustración del algoritmo}
+
+\includegraphics[scale=0.3]{diag2.png}
+
+
+La profundidad del PPtree es como mucho el número de clases.
+\end{frame}
+
+\begin{frame}
+\frametitle{ PPtree, 8 reglas de corte}
+\includegraphics[scale=0.3]{figure/rules.png}
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Aspectos menos deseables: I }
+<<r libs, echo = FALSE, warning = FALSE, message=FALSE,fig.align="center">>=
+library(MASS)
+library(ggplot2)
+library(RColorBrewer)
+library(PPtreeViz)
+library(gridExtra)
+library(reshape2)
+library(PPforest)
+library(plyr)
+library(plotly)
+library(dplyr)
+library(GGally)
+library(tidyr)
+@
+
+<<echo = FALSE, fig.height = 4, fig.width = 7,  warning = FALSE, message=FALSE >>=
+simu3 <- function(mux1, mux2, muy1, muy2, muz1, muz2,  cor1,cor2,cor3, n1 = 100, n2 = 100, n3 = 100) {
+  set.seed(666)
+  bivn <- mvrnorm(n1, mu = c(mux1, mux2), Sigma = matrix(c(1, cor1, cor1, 1), 2))
+  bivn2 <- mvrnorm(n2, mu = c(muy1, muy2), Sigma = matrix(c(1, cor2, cor2, 1), 2))
+  bivn3 <- mvrnorm(n3, mu = c(muz1, muz2), Sigma = matrix(c(1, cor3, cor3, 1), 2))
+
+  d1 <-data.frame(Sim = as.factor("sim1"), bivn)
+  d2 <- data.frame(Sim = as.factor("sim2"), bivn2)
+  d3 <- data.frame(Sim = as.factor("sim3"), bivn3)
+  rbind(d1, d2, d3)
+}
+
+ppbound <- function(ru, data , meth, entro, title) {
+  grilla <- base::expand.grid(X1 = seq((min(data$X1) + sign( min(data$X1))*.5) , (max(data$X1) + sign(max(data$X1))*.5), , 100),
+                              X2 = seq((min(data$X2 ) + sign( min(data$X2))*.5), (max(data$X2) + sign(max(data$X2))*.5), , 100))
+
+  if (meth == "Original"){
+  pptree <- PPtreeViz::PPTreeclass(Sim ~ ., data = data, "LDA")
+  ppred.sim <- PPtreeViz::PPclassify(pptree, test.data = grilla, Rule = ru)
+  grilla$pred <- ppred.sim[[2]]
+  err <- round(PPtreeViz::PPclassify(pptree, test.data = data[, -1], true.class = data[, 1], Rule = ru)[[1]] /
+  nrow(data[, -1]), 3 ) * 100
+  }
+
+  if (meth == "Rpart"){
+  rpart.mod <- rpart::rpart(Sim ~ ., data = data)
+  grilla$pred <-
+  predict(rpart.mod, newdata = grilla, type = "class")
+  err <- round(1 - sum(diag(table(
+  predict(rpart.mod, newdata = data[, -1], type = "class") , data[, 1]))) / nrow(data[, -1]), 3) * 100
+  }
+
+  if (entro) {
+  mod = 2
+  } else{
+  mod = 1
+  }
+
+  if (meth == "Modified") {
+  pptree <- PPtree_splitMOD(Sim ~ ., data = data, "LDA", entro = entro)
+  ppred.sim <- PPtreeViz::PPclassify(pptree, test.data = grilla, Rule = ru)
+  grilla$pred <- paste("sim", ppred.sim[[2]], sep = "")
+  err <- round( PPtreeViz::PPclassify(pptree, test.data = data[, -1], true.class = data[, 1], Rule = ru)[[1]] /
+  nrow(data[, -1]),3)*100
+  }
+
+  p <- ggplot2::ggplot(data = grilla) + ggplot2::geom_point(ggplot2::aes(x = X1,
+  y = X2, color = as.factor(pred), shape = as.factor(pred) ), alpha = .20) +
+  ggplot2::scale_colour_brewer(name = "Class", type = "qual",
+  palette = "Dark2") + ggplot2::theme_bw() +
+  ggplot2::scale_shape_discrete(name = 'Class')
+
+  pl.pp <-
+  p + ggplot2::geom_point( data = data, ggplot2::aes( x = X1 ,y = X2,
+  group = Sim, shape = Sim, color = Sim ), size = I(3)) +
+  ggplot2::theme(legend.position = "none", aspect.ratio = 1) +
+  ggplot2::scale_y_continuous(expand = c(0, 0)) + ggplot2::scale_x_continuous(expand = c(0, 0)) +
+  ggplot2::labs(x = " ", y = "",title = paste(title,"error",err,"%" ))
+
+  pl.pp
+}
+
+ppboundMOD <-function(data, meth="MOD", entro = FALSE, entroindiv = TRUE, title ){
+  grilla <- base::expand.grid(X1 = seq((min(data$X1) + sign( min(data$X1))*.5) , (max(data$X1) + sign(max(data$X1))*.5),, 100),
+                              X2 = seq((min(data$X2 ) + sign( min(data$X2))*.5), (max(data$X2) + sign(max(data$X2))*.5),, 100))
+
+
+
+  pptree <- PPTreeclass_MOD(Sim~. ,  data = data, PPmethod = 'LDA')
+
+  ppred.sim <- PPclassify_MOD(pptree, test.data = grilla)
+  grilla$ppred <-ppred.sim[[2]]
+  err <- round(PPclassify_MOD(pptree, test.data=data[,-1], true.class = data[,1])[[1]]/nrow(data[,-1]),3)*100
+
+
+  p <- ggplot2::ggplot(data = grilla ) + ggplot2::geom_point( ggplot2::aes(x = X1, y = X2, color = ppred, shape = ppred ), alpha = .20) +
+  ggplot2::scale_colour_brewer(name = "Class",type = "qual", palette = "Dark2" ) + ggplot2::theme_bw() +
+ ggplot2::scale_shape_discrete(name='Class')
+
+
+    pl.pp <- p + ggplot2::geom_point(data = data, ggplot2::aes(x = X1 , y = X2, group = Sim, shape = Sim, color = Sim), size = I(3)  ) +
+      ggplot2::theme(legend.position = "none",aspect.ratio = 1) +
+      ggplot2::scale_y_continuous(expand = c(0, 0) ) + ggplot2::scale_x_continuous(expand = c(0, 0)) +
+      ggplot2::labs(x = " ", y = "", title = paste(title,"error",err,"%" ))
+
+  pl.pp
+}
+
+
+dat.pl2 <- simu3(-1,0.6,0,-0.6, 2,-1,0.95, 0.95, 0.95, 100, 100, 100)
+
+gridExtra::grid.arrange( ppbound(ru =1,  data = dat.pl2, meth = "Rpart" , entro = FALSE, title = "Rpart " ),
+                               ppbound(ru =  1, data = dat.pl2, meth = "Original", entro = TRUE, title ="PPtree" ), ncol = 2)
+
+@
+
+PPtree define una banda entre el naranja y el violeta que es muy cercana al grupo ya que la primer partición usa información del naranja y verde para calcular la media que define el punto de corte.
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Aspectos menos deseables: II}
+
+<< echo = FALSE, fig.height = 4, fig.width = 7, warning = FALSE, message=FALSE,fig.align="center", strip.white=TRUE>>=
+
+#dat.pl2 <- simu3(-1, 0.6, 0, 0, 2,-1,0.95, 0.95, 0, 100, 100, 100)
+dat.pl2 <- simu3(-1,0.6,0,-0.6, 2,-1,0.95, 0.95, 0.95, 100, 100, 100)
+
+set.seed(123)
+aux <- data.frame(Sim = rep(paste("sim",2,sep=""), 100), X1 = stats::rnorm( n = 100, mean = 0, sd = .5), X2 = stats::rnorm( n = 100, mean = 5, sd = .5))
+      dat.pl2 <- rbind(dat.pl2, aux)
+
+ gridExtra::grid.arrange(
+   ppbound(ru=1, data=dat.pl2, meth = "Rpart" , entro = FALSE, title ="Rpart" ),
+   ppbound(ru=1, data=dat.pl2, meth = "Original", entro = TRUE, title="PPtree" ),
+   ncol = 2)
+@
+Los naranjas no pueden separarse por una única partición lineal y PPtree no puede modelar esto porque una clase es asignada solamente a un nodo terminal.
+
+\end{frame}
+
+
+\begin{frame}
+
+\frametitle{Extensión: PPtree }
+
+Hay dos formas que el algoritmo ha sido modificado:
+\begin{itemize}
+\item Regla de decisión.
+\item  Permitiendo particiones múltiples por grupos.
+\end{itemize}
+En este caso
+\begin{itemize}
+\item Subdividir super-clase para producir valor de corte más apropiado.
+
+\item Para incrementar el número de particiones por grupos, reglas de parada adicional tienen que ser definidas.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Extensión I: subdividiendo clases para producir mejores bandas}
+
+\begin{itemize}
+\item La primer modificación se enfoca en el cuarto paso del algoritmo original.
+
+\item En vez de combinar clases en una super clase, unicamente las dos clases más cercanas son usadas para determinar la partición.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{PPtree extensión I}
+\includegraphics[scale=0.3]{diagMOD1.png}
+\end{frame}
+
+\begin{frame}
+\frametitle{Extensión II: permitiendo particiones múltiples por grupos }
+\begin{itemize}
+
+\item La modificación introduce una nueva forma de seleccionar el valor de la partición basado en la impureza del grupo resultante.
+
+\item $E(s)=-\sum_{j=1}^G p_{js}log(p_{js})$ donde $p_{js}$ es la proporción de puntos de la clase $j$ en el subconjunto $s$ y $G$ el número de clases.
+
+\item  $E(s)$ grande indican grupos mezclados, impuros.
+
+\item $E(s)=0$ grupo puro.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{PPtree extension II}
+\begin{itemize}
+\item Para determinar la calidad de la partición se debe considerar el lado izquierdo y derecho de la partición.
+\item $E(s_L, s_R) = \frac{n_L}{n_L+n_R}E(s_L)+\frac{n_R}{n_L+n_R}E(s_R)$
+\item $E(s_L, s_R)$ se calcula para cada posible partición y la que tiene la mínima impureza determina $c$ el corte.
+
+\item Esta modificación cambia dramáticamente el algoritmo de PPtree con el objetivo de flexibilizarlo a clasificador no lineal permitiendo muchas particiones por clase.
+
+\item Necesitamos determinar reglas de parada.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{ PPtree extension II }
+\begin{enumerate}
+\item Optimiza un índice de proyección para encontr la proyección $1-D$ óptima $\alpha^*$ para separar todas las clases en los datos.
+
+\item Con los datos proyectados calcula la entropía para cada posible particción. Las posibles particiones son definidas entre cada valor proyectado.
+
+\item Selecciona la mejor partición que minimiza $E(s_L, s_R)$.
+
+\item Repite los pasos anteriores hasta que la regla de parada se satisface.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{ PPtree extensión II regla de parada}
+La regla de parada controla cuando el crecimiento del árbol debe parar.
+Las siguientes reglas de parada son usadas:
+
+\begin{itemize}
+\item Si un nodo es puro; todos los casos son de la misma clase en un nodo.
+\item Si el tamaño del nodo es menos que un valor menor a un valor determinado $n_S$.
+\item Si la reducción de la entropía de una partición es menos que un valor especificado $ent_s$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ilustración de la extensión II}
+
+\includegraphics[scale=.3]{diagMOD3.png}
+\end{frame}
+
+\begin{frame}
+\frametitle{Comparación de algoritmos}
+\begin{itemize}
+\item Comparamos los métodos usando shiny \cite{chang11shiny} que nos permite incluir datos simulados y definir las bandas de cada algoritmo de forma interactiva.
+
+\item  Se incluyen distintos métodos para simular datos 2D y las bandas definidad por los distintos algoritmos se muestra.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Comparación de algoritmos}
+
+\begin{itemize}
+\item Hay tres pestañas que  controlan los distintos tipos de datos simulados.
+
+\item 1 mixtura multivariada con igual matriz de var-cov para los grupos y diff media.
+
+\item Incluye un grupo con outliers.
+
+\item Simulación de mixturas con el paquete `MixSim`.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Panel 1:  Simulación básica de 3 clases}
+
+\url{https://player.vimeo.com/video/222613204}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Panel 2: Simulación con Outliers}
+\url{https://player.vimeo.com/video/222613230}
+\end{frame}
+
+\begin{frame}
+\frametitle{Panel 3: Simulaciones con  MixSim pkg}
+
+\url{https://player.vimeo.com/video/222613251}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Con datos reales}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Paquete PPtreeExt}
+\begin{itemize}
+\item Paquete en R PPtreeExt en etapa de desarrollo
+
+\item Disponible en https://github.com/natydasilva/PPtreeExt
+
+\item Deseable incluirlo en el paquete PPtree disponible en CRAN 
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Comentarios Finales}
+
+\begin{itemize}
+\item Se presentaron dos posibles modificaciones en el algoritmo de PPTree para hacerlo más flexible.
+
+\item Se examinaron las modificaciones mediante una shiny app.
+
+\item  Los resultados primarios muestran un algoritmo de clasificación más flexibles utilizando combinaciones de variables.
+
+\item  The shiny ilustra la simplicidad de constuir una herramienta para explorar resultados primarios en la modificacioón del algoritmo
+
+\item Implementado en un paquete en R.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Trabajo futuro}
+
+\begin{itemize}
+\item Comparar la performance de PPtree con sus posibles extensiones con datos simulados y reales
+
+\item Con los nuevos árboles extender PPforest
+
+\item ....
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t, allowframebreaks]
+\frametitle{References}
+\bibliographystyle{apalike}
+\bibliography{ppforestpaperbib}
+\end{frame}
+
+\end{document}

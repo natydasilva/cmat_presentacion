@@ -138,15 +138,11 @@ simu3 <- function(mux1, mux2, muy1, muy2, muz1, muz2,  cor1,cor2,cor3, n1 = 100,
   bivn2 <- mvrnorm(n2, mu = c(muy1, muy2), Sigma = matrix(c(1, cor2, cor2, 1), 2))
   bivn3 <- mvrnorm(n3, mu = c(muz1, muz2), Sigma = matrix(c(1, cor3, cor3, 1), 2))
 
-  d1 <- data.frame(Sim = "sim1", bivn)
-  d2 <- data.frame(Sim = "sim2", bivn2)
-  d3 <- data.frame(Sim = "sim3", bivn3)
+  d1 <-data.frame(Sim = as.factor("sim1"), bivn)
+  d2 <- data.frame(Sim = as.factor("sim2"), bivn2)
+  d3 <- data.frame(Sim = as.factor("sim3"), bivn3)
   rbind(d1, d2, d3)
 }
-
-
-
-dat.pl2 <- simu3(-1,0.6,0,-0.6, 2,-1,0.95, 0.95, 0.95, 100, 100, 100)
 
 ppbound <- function(ru, data , meth, entro, title) {
   grilla <- base::expand.grid(X1 = seq((min(data$X1) + sign( min(data$X1))*.5) , (max(data$X1) + sign(max(data$X1))*.5), , 100),
@@ -166,7 +162,6 @@ ppbound <- function(ru, data , meth, entro, title) {
   predict(rpart.mod, newdata = grilla, type = "class")
   err <- round(1 - sum(diag(table(
   predict(rpart.mod, newdata = data[, -1], type = "class") , data[, 1]))) / nrow(data[, -1]), 3) * 100
-
   }
 
   if (entro) {
@@ -199,8 +194,7 @@ ppbound <- function(ru, data , meth, entro, title) {
   pl.pp
 }
 
-
-ppboundMOD <- function( data , meth = "MOD", entro = FALSE, entroindiv = TRUE, title ){
+ppboundMOD <-function(data, meth="MOD", entro = FALSE, entroindiv = TRUE, title ){
   grilla <- base::expand.grid(X1 = seq((min(data$X1) + sign( min(data$X1))*.5) , (max(data$X1) + sign(max(data$X1))*.5),, 100),
                               X2 = seq((min(data$X2 ) + sign( min(data$X2))*.5), (max(data$X2) + sign(max(data$X2))*.5),, 100))
 
@@ -226,7 +220,10 @@ ppboundMOD <- function( data , meth = "MOD", entro = FALSE, entroindiv = TRUE, t
   pl.pp
 }
 
- gridExtra::grid.arrange( ppbound(ru =1,  data = dat.pl2, meth = "Rpart" , entro = FALSE, title = "Rpart " ),
+
+dat.pl2 <- simu3(-1,0.6,0,-0.6, 2,-1,0.95, 0.95, 0.95, 100, 100, 100)
+
+gridExtra::grid.arrange( ppbound(ru =1,  data = dat.pl2, meth = "Rpart" , entro = FALSE, title = "Rpart " ),
                                ppbound(ru =  1, data = dat.pl2, meth = "Original", entro = TRUE, title ="PPtree" ), ncol = 2)
 
 ```
